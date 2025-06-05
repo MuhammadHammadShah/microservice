@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 
 import { createLogger, format, transports } from 'winston'
+import { Config } from './config'
 
-const { combine, timestamp, printf, colorize } = format
+const { combine, timestamp, printf, colorize, json, prettyPrint } = format
 
 // Plain format (no color)
 const fileFormat = printf(({ level, message, timestamp }) => {
@@ -14,19 +15,29 @@ const consoleFormat = printf(({ level, message, timestamp }) => {
     return `[${timestamp}] ${level}: ${message}`
 })
 
-const productionLogger = () => {
+const logger = () => {
     return createLogger({
         level: 'info',
+        defaultMeta: {
+            serviceName: 'auth-service',
+        },
         transports: [
             new transports.Console({
-                format: combine(colorize(), timestamp(), consoleFormat),
+                format: combine(
+                    colorize(),
+                    timestamp(),
+                    prettyPrint(),
+                    consoleFormat,
+                ),
+                silent: Config.NODE_ENV === 'test',
             }),
             new transports.File({
                 filename: 'log/app.log',
-                format: combine(timestamp(), fileFormat),
+                format: combine(timestamp(), json(), prettyPrint(), fileFormat),
+                silent: Config.NODE_ENV === 'test', // if this logic becomes true, it will become silent
             }),
         ],
     })
 }
 
-export default productionLogger
+export default logger
