@@ -6,7 +6,16 @@ import tseslint from 'typescript-eslint'
 export default tseslint.config(
     eslint.configs.recommended,
     tseslint.configs.recommendedTypeChecked,
-    { ignores: ['dist', 'node_modules', 'eslint.config.*', 'log'] },
+    {
+        ignores: [
+            'dist',
+            'node_modules',
+            'eslint.config.*',
+            'log',
+            'app.spec.ts',
+            'jest.config.js',
+        ],
+    },
     {
         languageOptions: {
             parserOptions: {
