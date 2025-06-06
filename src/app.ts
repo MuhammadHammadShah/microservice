@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import createHttpError, { HttpError } from 'http-errors'
 import logger from './logger'
+import authRouter from './routes/auth'
 
 const app = express()
 
@@ -10,8 +11,10 @@ app.get('/', (req, res, next) => {
     // const err = createHttpError(401, 'You cannot access this route.') // if the middleware function is async use next() instead of throw()
     // next(err)
     // throw err
-    res.send('Welcome to auth service')
+    res.send('Welcome to auth==============service')
 })
+
+app.use('/auth', authRouter)
 
 // global error handler
 
