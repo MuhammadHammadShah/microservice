@@ -21,6 +21,9 @@
         "dotenv": "^16.5.0",
         "express": "^5.1.0",
         "http-errors": "^2.0.0",
+        "pg": "^8.16.0",
+        "reflect-metadata": "^0.2.2",
+        "typeorm": "^0.3.24",
         "winston": "^3.17.0"
     },
     "devDependencies": {
@@ -28,7 +31,7 @@
         "@types/express": "^5.0.2",
         "@types/http-errors": "^2.0.4",
         "@types/jest": "^29.5.14",
-        "@types/node": "^22.15.21",
+        "@types/node": "^22.15.30",
         "@types/supertest": "^6.0.3",
         "eslint": "^9.28.0",
         "husky": "^9.1.7",

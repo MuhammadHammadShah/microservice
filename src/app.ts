@@ -1,3 +1,5 @@
+import 'reflect-metadata'
+
 import express, { NextFunction, Request, Response } from 'express'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import createHttpError, { HttpError } from 'http-errors'
