@@ -3,7 +3,8 @@ import app from '../../src/app'
 import { DataSource } from 'typeorm'
 import { AppDataSource } from '../../src/config/data-source'
 import { User } from '../../src/entity/User'
-import { truncateTables } from '../utils'
+import { Roles } from '../../src/constants'
+
 //
 describe('POST /auth/register', () => {
     let connection: DataSource
@@ -17,12 +18,13 @@ describe('POST /auth/register', () => {
     /*An important step to reset database for each test, so data within database won't matched up*/
     beforeEach(async () => {
         // Database truncate
-        await truncateTables(connection)
+        await connection.dropDatabase()
+        await connection.synchronize()
     })
 
-    // afterAll(async () => {
-    //     await connection.destroy()
-    // })
+    afterAll(async () => {
+        await connection.destroy()
+    })
 
     describe('Given all Fields', () => {
         it('should return 201 status code', async () => {
@@ -120,6 +122,27 @@ describe('POST /auth/register', () => {
             expect(users).toHaveLength(1)
             expect(responseBody).toHaveProperty('id')
             expect(typeof responseBody.id).toBe('number')
+        })
+        it('should assign a customer role', async () => {
+            /* Arrange */
+            const userData = {
+                firstName: 'Rakesh',
+                lastName: 'K',
+                email: '123@gmail.com',
+                password: 'secret',
+            }
+
+            /* Act */
+
+            await request(app).post('/auth/register').send(userData)
+
+            /* Assert */
+
+            const userRepository = connection.getRepository(User)
+            const users = await userRepository.find()
+
+            expect(users[0]).toHaveProperty('role')
+            expect(users[0].role).toBe(Roles.CUSTOMER)
         })
     })
 
