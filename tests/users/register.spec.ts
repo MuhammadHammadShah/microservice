@@ -90,6 +90,37 @@ describe('POST /auth/register', () => {
             expect(users[0].lastName).toBe(userData.lastName)
             expect(users[0].email).toBe(userData.email)
         })
+        it('should return an id of the created user', async () => {
+            /**
+             * interface for safety of res.body
+             */
+            interface RegisteredResponse {
+                id: number
+            }
+
+            /* Arrange */
+            const userData = {
+                firstName: 'Rakesh',
+                lastName: 'K',
+                email: '123@gmail.com',
+                password: 'secret',
+            }
+
+            /* Act */
+
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData)
+
+            const responseBody = response.body as RegisteredResponse
+            /* Assert */
+
+            const userRepository = connection.getRepository(User)
+            const users = await userRepository.find()
+            expect(users).toHaveLength(1)
+            expect(responseBody).toHaveProperty('id')
+            expect(typeof responseBody.id).toBe('number')
+        })
     })
 
     //

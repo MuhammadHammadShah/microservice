@@ -10,13 +10,15 @@ export class AuthController {
     async register(req: RegisterUserRequest, res: Response) {
         try {
             const { firstName, lastName, email, password } = req.body
-            await this.userService.create({
+            const user = await this.userService.create({
                 firstName,
                 lastName,
                 email,
                 password,
             })
-            return res.status(201).json()
+            return res.status(201).json({
+                id: user.id,
+            })
         } catch (err) {
             console.error(err)
             return res.status(500).json({ error: 'Internal Server Error' })
