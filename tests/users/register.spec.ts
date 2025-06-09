@@ -1,7 +1,28 @@
 import request from 'supertest'
 import app from '../../src/app'
+import { DataSource } from 'typeorm'
+import { AppDataSource } from '../../src/config/data-source'
+import { User } from '../../src/entity/User'
+import { truncateTables } from '../utils'
 //
 describe('POST /auth/register', () => {
+    let connection: DataSource
+
+    // hook, run before or after any test suit
+    beforeAll(async () => {
+        connection = await AppDataSource.initialize()
+    })
+
+    /*An important step to reset database for each test, so data within database won't matched up*/
+    beforeEach(async () => {
+        // Database truncate
+        await truncateTables(connection)
+    })
+
+    // afterAll(async () => {
+    //     await connection.destroy()
+    // })
+
     describe('Given all Fields', () => {
         it('should return 201 status code', async () => {
             // AAA
@@ -61,6 +82,9 @@ describe('POST /auth/register', () => {
             await request(app).post('/auth/register').send(userData)
 
             /* Assert */
+            const userRepository = connection.getRepository(User)
+            const users = await userRepository.find()
+            expect(users).toHaveLength(1)
         })
     })
 
