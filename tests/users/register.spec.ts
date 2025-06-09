@@ -11,6 +11,7 @@ describe('POST /auth/register', () => {
     // hook, run before or after any test suit
     beforeAll(async () => {
         connection = await AppDataSource.initialize()
+        await connection.synchronize(true) // ⚠️ THIS RECREATES SCHEMA EACH TIME
     })
 
     /*An important step to reset database for each test, so data within database won't matched up*/
@@ -30,7 +31,7 @@ describe('POST /auth/register', () => {
             /* Arrange */
             const userData = {
                 firstName: 'Rakesh',
-                LastName: 'K',
+                lastName: 'K',
                 email: '123@gmail.com',
                 password: 'secret',
             }
@@ -51,7 +52,7 @@ describe('POST /auth/register', () => {
             /* Arrange */
             const userData = {
                 firstName: 'Rakesh',
-                LastName: 'K',
+                lastName: 'K',
                 email: '123@gmail.com',
                 password: 'secret',
             }
@@ -72,7 +73,7 @@ describe('POST /auth/register', () => {
             /* Arrange */
             const userData = {
                 firstName: 'Rakesh',
-                LastName: 'K',
+                lastName: 'K',
                 email: '123@gmail.com',
                 password: 'secret',
             }
@@ -85,6 +86,9 @@ describe('POST /auth/register', () => {
             const userRepository = connection.getRepository(User)
             const users = await userRepository.find()
             expect(users).toHaveLength(1)
+            expect(users[0].firstName).toBe(userData.firstName)
+            expect(users[0].lastName).toBe(userData.lastName)
+            expect(users[0].email).toBe(userData.email)
         })
     })
 

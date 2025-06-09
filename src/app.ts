@@ -7,6 +7,7 @@ import logger from './logger'
 import authRouter from './routes/auth'
 
 const app = express()
+app.use(express.json())
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.get('/', (req, res, next) => {
