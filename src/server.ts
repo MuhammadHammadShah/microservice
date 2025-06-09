@@ -1,6 +1,6 @@
 import app from './app'
 import { Config } from './config'
-import logger from './logger'
+import logger from './config/logger'
 
 const startServer = () => {
     const PORT = Config.PORT

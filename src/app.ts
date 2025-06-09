@@ -3,7 +3,7 @@ import 'reflect-metadata'
 import express, { NextFunction, Request, Response } from 'express'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import createHttpError, { HttpError } from 'http-errors'
-import logger from './logger'
+import logger from './config/logger'
 import authRouter from './routes/auth'
 
 const app = express()
