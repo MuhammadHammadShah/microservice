@@ -4,6 +4,7 @@ import { User } from '../entity/User'
 import { UserData } from '../types'
 import createHttpError from 'http-errors'
 import { Roles } from '../constants'
+import bcrypt from 'bcrypt'
 
 export class UserService {
     constructor(private userRepository: Repository<User>) {}
@@ -14,6 +15,20 @@ export class UserService {
         email,
         password,
     }: UserData): Promise<User> {
+        // check  for same email
+        const user = await this.userRepository.findOne({
+            where: {
+                email: email,
+            },
+        })
+        if (user) {
+            const err = createHttpError(400, 'email already exists!')
+            throw err
+        }
+
+        // hashed password
+        const saltRounds = 10
+        const hashedPassword = await bcrypt.hash(password, saltRounds)
         try {
             return await this.userRepository.save({
                 /**  awaiting the .save() method but not returning the result.
@@ -21,7 +36,7 @@ export class UserService {
                 firstName,
                 lastName,
                 email,
-                password,
+                password: hashedPassword,
                 role: Roles.CUSTOMER,
             })
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
