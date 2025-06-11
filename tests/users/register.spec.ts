@@ -9,15 +9,12 @@ import { Roles } from '../../src/constants'
 describe('POST /auth/register', () => {
     let connection: DataSource
 
-    // hook, run before or after any test suit
     beforeAll(async () => {
         connection = await AppDataSource.initialize()
-        await connection.synchronize(true) // ⚠️ THIS RECREATES SCHEMA EACH TIME
+        await connection.synchronize(true)
     })
 
-    /*An important step to reset database for each test, so data within database won't matched up*/
     beforeEach(async () => {
-        // Database truncate
         await connection.dropDatabase()
         await connection.synchronize()
     })
@@ -193,5 +190,29 @@ describe('POST /auth/register', () => {
     })
 
     //
-    describe('Fields are Missing', () => {})
+    describe('Fields are Missing', () => {
+        it('should return 400 status code if email field is missing', async () => {
+            /* Arrange */
+            const userData = {
+                firstName: 'Rakesh',
+                lastName: 'K',
+                email: '',
+                password: 'secret',
+            }
+
+            /* Act */
+
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData)
+
+            /* Assert */
+
+            expect(response.statusCode).toBe(400)
+            const userRepository = connection.getRepository(User)
+
+            const users = await userRepository.find()
+            expect(users).toHaveLength(0)
+        })
+    })
 })

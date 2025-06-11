@@ -3,6 +3,8 @@ import { RegisterUserRequest } from '../types'
 import { UserService } from '../services/userService'
 import { Logger } from 'winston'
 
+import { validationResult } from 'express-validator'
+
 export class AuthController {
     /*Called dependency injection*/
     /*  This code removes coupling with the Service file, so the code dont depends so much on service file  */
@@ -16,7 +18,15 @@ export class AuthController {
         res: Response,
         next: NextFunction,
     ) {
+        const result = validationResult(req)
+        if (!result.isEmpty()) {
+            return res.status(400).json({
+                errors: result.array(),
+            })
+        }
+
         const { firstName, lastName, email, password } = req.body
+
         this.logger.debug('New Request to register a user', {
             firstName,
             lastName,
