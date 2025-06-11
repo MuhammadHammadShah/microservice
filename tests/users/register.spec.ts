@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm'
 import { AppDataSource } from '../../src/config/data-source'
 import { User } from '../../src/entity/User'
 import { Roles } from '../../src/constants'
+import { isJwt } from '../utils'
 
 //
 describe('POST /auth/register', () => {
@@ -141,6 +142,7 @@ describe('POST /auth/register', () => {
             expect(users[0]).toHaveProperty('role')
             expect(users[0].role).toBe(Roles.CUSTOMER)
         })
+        // favourite one to be copied
         it('should store the hashed passowrd in the database', async () => {
             /* Arrange */
             const userData = {
@@ -187,6 +189,45 @@ describe('POST /auth/register', () => {
             expect(response.statusCode).toBe(400)
             expect(users).toHaveLength(1)
         })
+        it('should return the access token and refresh token in a cookie', async () => {
+            /* Arrange */
+            const userData = {
+                firstName: 'Rakesh',
+                lastName: 'K',
+                email: '123@gmail.com',
+                password: 'secret',
+            }
+
+            /* Act */
+
+            // we need the headers within response
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData)
+
+            /* Assert */
+            let accessToken = null
+            let refreshToken = null
+            const cookies =
+                (response.headers['set-cookie'] as unknown as string[]) || []
+
+            cookies.forEach((cookie) => {
+                if (cookie.startsWith('accessToken=')) {
+                    accessToken = cookie.split(';')[0].split('=')[1] // this line does the below
+                    // it first split the token by ; then get the first element then split it by = and get the second element which a token value
+                }
+
+                if (cookie.startsWith('refreshToken=')) {
+                    refreshToken = cookie.split(';')[0].split('=')[1]
+                }
+            })
+
+            expect(accessToken).not.toBeNull()
+            expect(refreshToken).not.toBeNull()
+
+            expect(isJwt(accessToken)).toBeTruthy()
+            expect(isJwt(refreshToken)).toBeTruthy()
+        })
     })
 
     //
@@ -214,6 +255,8 @@ describe('POST /auth/register', () => {
             const users = await userRepository.find()
             expect(users).toHaveLength(0)
         })
+    })
+    describe('Fields are not in Proper format', () => {
         it('should trim the email field `remove white spaces `', async () => {
             /* Arrange */
             const userData = {
