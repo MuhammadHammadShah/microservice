@@ -14,12 +14,13 @@ export default tseslint.config(
             'log',
             'app.spec.ts',
             'jest.config.js',
+            '**/scripts/*.mjs',
         ],
     },
     {
         languageOptions: {
             parserOptions: {
-                project: ['./tsconfig.json'],
+                project: './tsconfig.json',
                 projectService: true,
                 tsconfigRootDir: import.meta.dirname,
             },

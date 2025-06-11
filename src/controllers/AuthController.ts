@@ -1,9 +1,13 @@
+import fs from 'fs'
 import { NextFunction, Response } from 'express'
 import { RegisterUserRequest } from '../types'
 import { UserService } from '../services/userService'
 import { Logger } from 'winston'
 
 import { validationResult } from 'express-validator'
+import { JwtPayload, sign } from 'jsonwebtoken'
+import path from 'path'
+import createHttpError from 'http-errors'
 
 export class AuthController {
     /*Called dependency injection*/
@@ -44,7 +48,31 @@ export class AuthController {
 
             /** Send Cookies before response, or with response */
 
-            const accessToken = 'ajsfjkfa'
+            let privateKey: Buffer
+            try {
+                privateKey = fs.readFileSync(
+                    path.join(__dirname, '../../certs/private.pem'),
+                )
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (err) {
+                const error = createHttpError(
+                    500,
+                    'error while reading private key',
+                )
+                next(error)
+                return
+            }
+
+            const payload: JwtPayload = {
+                sub: String(user.id),
+                role: user.role,
+            }
+
+            const accessToken = sign(payload, privateKey, {
+                algorithm: 'RS256',
+                expiresIn: '1h',
+                issuer: 'auth-service',
+            })
             const refreshToken = 'rrrrrrjsfjkfa'
 
             res.cookie('accessToken', accessToken, {
