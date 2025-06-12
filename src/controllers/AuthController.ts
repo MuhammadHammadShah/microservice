@@ -1,16 +1,14 @@
-import fs from 'fs'
 import { NextFunction, Response } from 'express'
 import { RegisterUserRequest } from '../types'
 import { UserService } from '../services/userService'
 import { Logger } from 'winston'
 
 import { validationResult } from 'express-validator'
-import { JwtPayload, sign } from 'jsonwebtoken'
-import path from 'path'
-import createHttpError from 'http-errors'
-import { Config } from '../config'
+import { JwtPayload } from 'jsonwebtoken'
+
 import { AppDataSource } from '../config/data-source'
 import { RefreshToken } from '../entity/RefreshToken'
+import { TokenService } from '../services/TokenService'
 
 export class AuthController {
     /*Called dependency injection*/
@@ -18,6 +16,7 @@ export class AuthController {
     constructor(
         private userService: UserService,
         private logger: Logger,
+        private tokenService: TokenService,
     ) {}
     /**/
     async register(
@@ -49,33 +48,15 @@ export class AuthController {
             })
             this.logger.info('User has been registered', { id: user.id })
 
-            /** Send Cookies before response, or with response */
-
-            let privateKey: Buffer
-            try {
-                privateKey = fs.readFileSync(
-                    path.join(__dirname, '../../certs/private.pem'),
-                )
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (err) {
-                const error = createHttpError(
-                    500,
-                    'error while reading private key',
-                )
-                next(error)
-                return
-            }
-
             const payload: JwtPayload = {
                 sub: String(user.id),
                 role: user.role,
             }
 
-            const accessToken = sign(payload, privateKey, {
-                algorithm: 'RS256',
-                expiresIn: '1h',
-                issuer: 'auth-service',
-            })
+            //access token
+            const accessToken = this.tokenService.generateAccessToken(payload)
+
+            //
 
             // Persist the Refresh Token
             const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365 // 1Y (-> leap year)
@@ -88,14 +69,11 @@ export class AuthController {
 
             //
 
-            const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
-                // ! means that we are sure about the type of this object.
-                algorithm: 'HS256',
-                expiresIn: '1y',
-                issuer: 'auth-service',
-                jwtid: String(newRefreshToken.id),
+            // refresh token
+            const refreshToken = this.tokenService.generateRefreshToken({
+                ...payload,
+                id: String(newRefreshToken.id),
             })
-
             //
 
             res.cookie('accessToken', accessToken, {
