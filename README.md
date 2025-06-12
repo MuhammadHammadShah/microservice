@@ -10,3 +10,5 @@
 - docker exec -it mernpg-container psql -U root
 
 don't install `npm i -D @types/express-validator`
+
+Record is a type of key-value pair where <string,string> is (key,value)
