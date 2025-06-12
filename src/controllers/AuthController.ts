@@ -8,6 +8,7 @@ import { validationResult } from 'express-validator'
 import { JwtPayload, sign } from 'jsonwebtoken'
 import path from 'path'
 import createHttpError from 'http-errors'
+import { Config } from '../config'
 
 export class AuthController {
     /*Called dependency injection*/
@@ -73,7 +74,14 @@ export class AuthController {
                 expiresIn: '1h',
                 issuer: 'auth-service',
             })
-            const refreshToken = 'rrrrrrjsfjkfa'
+            const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
+                // ! means that we are sure about the type of this object.
+                algorithm: 'HS256',
+                expiresIn: '1y',
+                issuer: 'auth-service',
+            })
+
+            //
 
             res.cookie('accessToken', accessToken, {
                 domain: 'localhost',

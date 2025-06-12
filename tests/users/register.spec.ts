@@ -226,7 +226,7 @@ describe('POST /auth/register', () => {
             expect(refreshToken).not.toBeNull()
             console.log(accessToken)
             expect(isJwt(accessToken)).toBeTruthy()
-            // expect(isJwt(refreshToken)).toBeTruthy()
+            expect(isJwt(refreshToken)).toBeTruthy()
         })
     })
 
