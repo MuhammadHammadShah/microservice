@@ -6,8 +6,6 @@ import { Logger } from 'winston'
 import { validationResult } from 'express-validator'
 import { JwtPayload } from 'jsonwebtoken'
 
-import { AppDataSource } from '../config/data-source'
-import { RefreshToken } from '../entity/RefreshToken'
 import { TokenService } from '../services/TokenService'
 
 export class AuthController {
@@ -59,14 +57,8 @@ export class AuthController {
             //
 
             // Persist the Refresh Token
-            const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365 // 1Y (-> leap year)
-            const refreshTokenRepository =
-                AppDataSource.getRepository(RefreshToken)
-            const newRefreshToken = await refreshTokenRepository.save({
-                user: user,
-                expiresAt: String(Date.now() + MS_IN_YEAR),
-            })
-
+            const newRefreshToken =
+                await this.tokenService.persistRefreshToken(user)
             //
 
             // refresh token
