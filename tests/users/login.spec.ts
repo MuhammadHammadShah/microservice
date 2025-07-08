@@ -17,4 +17,10 @@ describe("POST /auth/register", () => {
     afterAll(async () => {
         await connection.destroy()
     })
+
+    // happy path
+
+    describe("Given all fields", () => {
+        it.todo("should login the user")
+    })
 })

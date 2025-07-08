@@ -6,8 +6,8 @@ import { Config } from "."
 const { combine, timestamp, printf, colorize, json, prettyPrint } = format
 
 // Plain format (no color)
-const fileFormat = printf(({ level, message, timestamp }) => {
-    return `[${timestamp}] ${level.toUpperCase()}: ${message}`
+const fileFormat = printf(({ level, message, timestamp, ...meta }) => {
+    return `[${timestamp}] ${level.toUpperCase()}: ${message} ${JSON.stringify(meta)}`
 })
 
 // Color format (leave level lowercase to preserve color codes)
