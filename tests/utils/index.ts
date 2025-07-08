@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm'
+import { DataSource } from "typeorm"
 
 export const truncateTables = async (connection: DataSource) => {
     const entities = connection.entityMetadatas
@@ -14,13 +14,13 @@ export const isJwt = (token: string | null): boolean => {
     if (token === null) {
         return false
     }
-    const parts = token.split('.') // now this function is used like, it will take the splitted-before token and further split it by .
+    const parts = token.split(".") // now this function is used like, it will take the splitted-before token and further split it by .
     if (parts.length !== 3) {
         return false
     }
     try {
         parts.forEach((part) => {
-            Buffer.from(part, 'base64').toString('utf-8')
+            Buffer.from(part, "base64").toString("utf-8")
         })
         return true
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -5,7 +5,7 @@ services:
             dockerfile: Dockerfile
         container_name: auth-service-dev
         ports:
-            - '5501:5501'
+            - "5501:5501"
         working_dir: /usr/src/app
         develop:
             watch:
@@ -24,4 +24,4 @@ services:
             - NODE_ENV=development
         stdin_open: true
         tty: true
-        restart: 'no'
+        restart: "no"

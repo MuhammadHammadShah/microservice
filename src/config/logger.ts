@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 
-import { createLogger, format, transports } from 'winston'
-import { Config } from '.'
+import { createLogger, format, transports } from "winston"
+import { Config } from "."
 
 const { combine, timestamp, printf, colorize, json, prettyPrint } = format
 
@@ -17,9 +17,9 @@ const consoleFormat = printf(({ level, message, timestamp }) => {
 
 const logger = () => {
     return createLogger({
-        level: 'info',
+        level: "info",
         defaultMeta: {
-            serviceName: 'auth-service',
+            serviceName: "auth-service",
         },
         transports: [
             new transports.Console({
@@ -29,12 +29,12 @@ const logger = () => {
                     prettyPrint(),
                     consoleFormat,
                 ),
-                silent: Config.NODE_ENV === 'test',
+                silent: Config.NODE_ENV === "test",
             }),
             new transports.File({
-                filename: 'log/app.log',
+                filename: "log/app.log",
                 format: combine(timestamp(), json(), prettyPrint(), fileFormat),
-                silent: Config.NODE_ENV === 'test', // if this logic becomes true, it will become silent
+                silent: Config.NODE_ENV === "test", // if this logic becomes true, it will become silent
             }),
         ],
     })

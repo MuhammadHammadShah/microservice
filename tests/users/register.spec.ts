@@ -1,14 +1,14 @@
-import request from 'supertest'
-import app from '../../src/app'
-import { DataSource } from 'typeorm'
-import { AppDataSource } from '../../src/config/data-source'
-import { User } from '../../src/entity/User'
-import { Roles } from '../../src/constants'
-import { isJwt } from '../utils'
-import { RefreshToken } from '../../src/entity/RefreshToken'
+import request from "supertest"
+import app from "../../src/app"
+import { DataSource } from "typeorm"
+import { AppDataSource } from "../../src/config/data-source"
+import { User } from "../../src/entity/User"
+import { Roles } from "../../src/constants"
+import { isJwt } from "../utils"
+import { RefreshToken } from "../../src/entity/RefreshToken"
 
 //
-describe('POST /auth/register', () => {
+describe("POST /auth/register", () => {
     let connection: DataSource
 
     beforeAll(async () => {
@@ -25,63 +25,63 @@ describe('POST /auth/register', () => {
         await connection.destroy()
     })
 
-    describe('Given all Fields', () => {
-        it('should return 201 status code', async () => {
+    describe("Given all Fields", () => {
+        it("should return 201 status code", async () => {
             // AAA
 
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: '123@gmail.com',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "123@gmail.com",
+                password: "secret",
             }
 
             /* Act */
 
             const response = await request(app)
-                .post('/auth/register')
+                .post("/auth/register")
                 .send(userData)
 
             /* Assert */
 
             expect(response.statusCode).toBe(201)
         })
-        it('should return valid JSON responses', async () => {
+        it("should return valid JSON responses", async () => {
             // AAA
 
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: '123@gmail.com',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "123@gmail.com",
+                password: "secret",
             }
 
             /* Act */
 
             const response = await request(app)
-                .post('/auth/register')
+                .post("/auth/register")
                 .send(userData)
 
             /* Assert */
 
             expect(
-                (response.headers as Record<string, string>)['content-type'],
-            ).toEqual(expect.stringContaining('json'))
+                (response.headers as Record<string, string>)["content-type"],
+            ).toEqual(expect.stringContaining("json"))
         })
-        it('should persist the user in the database', async () => {
+        it("should persist the user in the database", async () => {
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: '123@gmail.com',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "123@gmail.com",
+                password: "secret",
             }
 
             /* Act */
 
-            await request(app).post('/auth/register').send(userData)
+            await request(app).post("/auth/register").send(userData)
 
             /* Assert */
             const userRepository = connection.getRepository(User)
@@ -91,7 +91,7 @@ describe('POST /auth/register', () => {
             expect(users[0].lastName).toBe(userData.lastName)
             expect(users[0].email).toBe(userData.email)
         })
-        it('should return an id of the created user', async () => {
+        it("should return an id of the created user", async () => {
             /**
              * interface for safety of res.body
              */
@@ -101,16 +101,16 @@ describe('POST /auth/register', () => {
 
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: '123@gmail.com',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "123@gmail.com",
+                password: "secret",
             }
 
             /* Act */
 
             const response = await request(app)
-                .post('/auth/register')
+                .post("/auth/register")
                 .send(userData)
 
             const responseBody = response.body as RegisteredResponse
@@ -119,43 +119,43 @@ describe('POST /auth/register', () => {
             const userRepository = connection.getRepository(User)
             const users = await userRepository.find()
             expect(users).toHaveLength(1)
-            expect(responseBody).toHaveProperty('id')
-            expect(typeof responseBody.id).toBe('number')
+            expect(responseBody).toHaveProperty("id")
+            expect(typeof responseBody.id).toBe("number")
         })
-        it('should assign a customer role', async () => {
+        it("should assign a customer role", async () => {
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: '123@gmail.com',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "123@gmail.com",
+                password: "secret",
             }
 
             /* Act */
 
-            await request(app).post('/auth/register').send(userData)
+            await request(app).post("/auth/register").send(userData)
 
             /* Assert */
 
             const userRepository = connection.getRepository(User)
             const users = await userRepository.find()
 
-            expect(users[0]).toHaveProperty('role')
+            expect(users[0]).toHaveProperty("role")
             expect(users[0].role).toBe(Roles.CUSTOMER)
         })
         // favourite one to be copied
-        it('should store the hashed passowrd in the database', async () => {
+        it("should store the hashed passowrd in the database", async () => {
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: '123@gmail.com',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "123@gmail.com",
+                password: "secret",
             }
 
             /* Act */
 
-            await request(app).post('/auth/register').send(userData)
+            await request(app).post("/auth/register").send(userData)
 
             /* Assert */
 
@@ -170,10 +170,10 @@ describe('POST /auth/register', () => {
         it('should return 400 status code if "email" already exits in database', async () => {
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: '123@gmail.com',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "123@gmail.com",
+                password: "secret",
             }
 
             const userRepository = connection.getRepository(User)
@@ -182,7 +182,7 @@ describe('POST /auth/register', () => {
             /* Act */
 
             const response = await request(app)
-                .post('/auth/register')
+                .post("/auth/register")
                 .send(userData)
 
             /* Assert */
@@ -190,36 +190,36 @@ describe('POST /auth/register', () => {
             expect(response.statusCode).toBe(400)
             expect(users).toHaveLength(1)
         })
-        it('should return the access token and refresh token in a cookie', async () => {
+        it("should return the access token and refresh token in a cookie", async () => {
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: '123@gmail.com',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "123@gmail.com",
+                password: "secret",
             }
 
             /* Act */
 
             // we need the headers within response
             const response = await request(app)
-                .post('/auth/register')
+                .post("/auth/register")
                 .send(userData)
 
             /* Assert */
             let accessToken = null
             let refreshToken = null
             const cookies =
-                (response.headers['set-cookie'] as unknown as string[]) || []
+                (response.headers["set-cookie"] as unknown as string[]) || []
 
             cookies.forEach((cookie) => {
-                if (cookie.startsWith('accessToken=')) {
-                    accessToken = cookie.split(';')[0].split('=')[1] // this line does the below
+                if (cookie.startsWith("accessToken=")) {
+                    accessToken = cookie.split(";")[0].split("=")[1] // this line does the below
                     // it first split the token by ; then get the first element then split it by = and get the second element which a token value
                 }
 
-                if (cookie.startsWith('refreshToken=')) {
-                    refreshToken = cookie.split(';')[0].split('=')[1]
+                if (cookie.startsWith("refreshToken=")) {
+                    refreshToken = cookie.split(";")[0].split("=")[1]
                 }
             })
 
@@ -229,19 +229,19 @@ describe('POST /auth/register', () => {
             expect(isJwt(refreshToken)).toBeTruthy()
         })
 
-        it('should return the refresh token in the database', async () => {
+        it("should return the refresh token in the database", async () => {
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: '123@gmail.com',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "123@gmail.com",
+                password: "secret",
             }
 
             /* Act */
 
             const response = await request(app)
-                .post('/auth/register')
+                .post("/auth/register")
                 .send(userData)
 
             /* Assert */
@@ -253,8 +253,8 @@ describe('POST /auth/register', () => {
             // query builder
 
             const tokens = await refreshTokenRepo
-                .createQueryBuilder('refreshToken')
-                .where('refreshToken.userId = :userId', {
+                .createQueryBuilder("refreshToken")
+                .where("refreshToken.userId = :userId", {
                     userId: (response.body as Record<string, string>).id,
                 })
                 .getMany()
@@ -264,20 +264,20 @@ describe('POST /auth/register', () => {
     })
 
     //
-    describe('Fields are Missing', () => {
-        it('should return 400 status code if email field is missing', async () => {
+    describe("Fields are Missing", () => {
+        it("should return 400 status code if email field is missing", async () => {
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: '',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: "",
+                password: "secret",
             }
 
             /* Act */
 
             const response = await request(app)
-                .post('/auth/register')
+                .post("/auth/register")
                 .send(userData)
 
             /* Assert */
@@ -289,25 +289,25 @@ describe('POST /auth/register', () => {
             expect(users).toHaveLength(0)
         })
     })
-    describe('Fields are not in Proper format', () => {
-        it('should trim the email field `remove white spaces `', async () => {
+    describe("Fields are not in Proper format", () => {
+        it("should trim the email field `remove white spaces `", async () => {
             /* Arrange */
             const userData = {
-                firstName: 'Rakesh',
-                lastName: 'K',
-                email: ' 123@gmail.com ',
-                password: 'secret',
+                firstName: "Rakesh",
+                lastName: "K",
+                email: " 123@gmail.com ",
+                password: "secret",
             }
 
             /* Act */
 
-            await request(app).post('/auth/register').send(userData)
+            await request(app).post("/auth/register").send(userData)
 
             /* Assert */
             const userRepository = connection.getRepository(User)
             const users = await userRepository.find()
             const user = users[0]
-            expect(user.email).toBe('123@gmail.com')
+            expect(user.email).toBe("123@gmail.com")
         })
     })
 })
