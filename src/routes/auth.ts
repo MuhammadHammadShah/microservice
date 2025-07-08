@@ -1,12 +1,12 @@
-import express, { NextFunction, Request, Response } from 'express'
-import { AuthController } from '../controllers/AuthController'
-import { UserService } from '../services/userService'
-import { AppDataSource } from '../config/data-source'
-import { User } from '../entity/User'
-import logger from '../config/logger'
-import registerValidators from '../validators/register-validator'
-import { TokenService } from '../services/TokenService'
-import { RefreshToken } from '../entity/RefreshToken'
+import express, { NextFunction, Request, Response } from "express"
+import { AuthController } from "../controllers/AuthController"
+import { UserService } from "../services/userService"
+import { AppDataSource } from "../config/data-source"
+import { User } from "../entity/User"
+import logger from "../config/logger"
+import registerValidators from "../validators/register-validator"
+import { TokenService } from "../services/TokenService"
+import { RefreshToken } from "../entity/RefreshToken"
 
 const router = express.Router()
 
@@ -17,7 +17,7 @@ const tokenService = new TokenService(refreshTokenRepository)
 const authController = new AuthController(userService, logger(), tokenService)
 
 router.post(
-    '/register',
+    "/register",
     registerValidators,
     async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -27,5 +27,8 @@ router.post(
         }
     },
 )
+router.get("/", (req, res) => {
+    res.send("hi from me")
+})
 
 export default router

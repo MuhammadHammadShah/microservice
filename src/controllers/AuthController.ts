@@ -1,12 +1,12 @@
-import { NextFunction, Response } from 'express'
-import { RegisterUserRequest } from '../types'
-import { UserService } from '../services/userService'
-import { Logger } from 'winston'
+import { NextFunction, Response } from "express"
+import { RegisterUserRequest } from "../types"
+import { UserService } from "../services/userService"
+import { Logger } from "winston"
 
-import { validationResult } from 'express-validator'
-import { JwtPayload } from 'jsonwebtoken'
+import { validationResult } from "express-validator"
+import { JwtPayload } from "jsonwebtoken"
 
-import { TokenService } from '../services/TokenService'
+import { TokenService } from "../services/TokenService"
 
 export class AuthController {
     /*Called dependency injection*/
@@ -31,11 +31,11 @@ export class AuthController {
 
         const { firstName, lastName, email, password } = req.body
 
-        this.logger.debug('New Request to register a user', {
+        this.logger.debug("New Request to register a user", {
             firstName,
             lastName,
             email,
-            password: '********',
+            password: "********",
         })
         try {
             const user = await this.userService.create({
@@ -44,7 +44,7 @@ export class AuthController {
                 email,
                 password,
             })
-            this.logger.info('User has been registered', { id: user.id })
+            this.logger.info("User has been registered", { id: user.id })
 
             const payload: JwtPayload = {
                 sub: String(user.id),
@@ -68,21 +68,21 @@ export class AuthController {
             })
             //
 
-            res.cookie('accessToken', accessToken, {
-                domain: 'localhost',
-                sameSite: 'strict',
+            res.cookie("accessToken", accessToken, {
+                domain: "localhost",
+                sameSite: "strict",
                 maxAge: 1000 * 60 * 60, // 1h
                 httpOnly: true,
             })
-            res.cookie('refreshToken', refreshToken, {
-                domain: 'localhost',
-                sameSite: 'strict',
+            res.cookie("refreshToken", refreshToken, {
+                domain: "localhost",
+                sameSite: "strict",
                 maxAge: 1000 * 60 * 60 * 24 * 365, // 1Y
                 httpOnly: true,
             })
 
             /** */
-            return res.status(201).json({
+            return res.status(200).json({
                 id: user.id,
             })
         } catch (err) {
@@ -90,4 +90,5 @@ export class AuthController {
             return
         }
     }
+    /**/
 }
