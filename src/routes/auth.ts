@@ -48,6 +48,11 @@ router.post(
     },
 )
 
+// authController k upar safe name ka method call krna hai.
+
+router.get("/self", async (req: Request, res: Response) => {
+    await authController.self(req, res)
+})
 router.get("/", (req, res) => {
     res.send("hi from me")
 })
