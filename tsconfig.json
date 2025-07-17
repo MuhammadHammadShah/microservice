@@ -121,7 +121,9 @@
         "tests",
         "tests/utils",
         "src/routes",
-        "scripts/**/*"
+        "scripts/**/*.js",
+        "scripts/**/*.mjs",
+        "scripts/run-migration.js" // Exact file
     ],
     "exclude": ["node_modules", "dist"]
 }

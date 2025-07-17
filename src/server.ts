@@ -1,29 +1,24 @@
-import app from "./app"
-import { Config } from "./config"
-import { AppDataSource } from "./config/data-source"
-import logger from "./config/logger"
+//server.ts
+
+import app from "./app";
+import { Config } from "./config";
+import { AppDataSource } from "./config/data-source";
+import logger from "./config/logger";
 
 const startServer = async () => {
+    const PORT = Config.PORT;
     try {
-        await AppDataSource.initialize()
-        logger().info("Database connected successfully")
-
-        const PORT = Config.PORT || 8000
-        app.listen(PORT, () => {
-            logger().info(`Server listening on port ${PORT}`)
-        })
-    } catch (error) {
-        logger().error("Error during server startup:", error)
-        process.exit(1)
+        await AppDataSource.initialize();
+        logger().info("Database connected successfully. wow!");
+        app.listen(PORT, () => logger().info(`Listening on port ${PORT}`));
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            logger().error(err.message);
+            setTimeout(() => {
+                process.exit(1);
+            }, 1000);
+        }
     }
-}
+};
 
-startServer().catch((err) => {
-    console.error(err)
-    process.exit(1)
-})
-
-process.on("unhandledRejection", (err) => {
-    logger().error("Unhandled Rejection:", err)
-    process.exit(1)
-})
+void startServer();
