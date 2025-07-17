@@ -1,43 +1,31 @@
 import "reflect-metadata";
 
-import express, { NextFunction, Request, Response } from "express";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import createHttpError, { HttpError } from "http-errors";
-import logger from "./config/logger";
+import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import authRouter from "./routes/auth";
+import tenantRouter from "./routes/tenant";
+import userRouter from "./routes/user";
+import { globalErrorHandler } from "./middlewares/globalErrorHandler";
+import { Config } from "./config";
 
 const app = express();
+const ALLOWED_DOMAINS = [Config.CLIENT_UI_DOMAIN, Config.ADMIN_UI_DOMAIN];
+
+app.use(cors({ origin: ALLOWED_DOMAINS as string[], credentials: true }));
+
+app.use(express.static("public"));
 app.use(cookieParser());
 app.use(express.json());
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.get("/", (req, res, next) => {
-    // const err = createHttpError(401, 'You cannot access this route.') // if the middleware function is async use next() instead of throw()
-    // next(err)
-    // throw err
-    res.send("Welcome to auth==============service");
+app.get("/", (req, res) => {
+    res.send("Welcome to Auth service from K8s");
 });
 
 app.use("/auth", authRouter);
+app.use("/tenants", tenantRouter);
+app.use("/users", userRouter);
 
-// global error handler
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
-    logger().error(err.message);
-    const statusCode = err.statusCode || 500;
-
-    res.status(statusCode).json({
-        errors: [
-            {
-                type: err.name,
-                msg: err.message,
-                path: "",
-                location: "",
-            },
-        ],
-    });
-});
+app.use(globalErrorHandler);
 
 export default app;

@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 
-import { createLogger, format, transports } from "winston"
-import { Config } from "."
+import { createLogger, format, transports } from "winston";
+import { Config } from ".";
 
-const { combine, timestamp, printf, colorize, json, prettyPrint } = format
+const { combine, timestamp, printf, colorize, json, prettyPrint } = format;
 
 // Plain format (no color)
 const fileFormat = printf(({ level, message, timestamp, ...meta }) => {
-    return `[${timestamp}] ${level.toUpperCase()}: ${message} ${JSON.stringify(meta)}`
-})
+    return `[${timestamp}] ${level.toUpperCase()}: ${message} ${JSON.stringify(meta)}`;
+});
 
 // Color format (leave level lowercase to preserve color codes)
 const consoleFormat = printf(({ level, message, timestamp }) => {
-    return `[${timestamp}] ${level}: ${message}`
-})
+    return `[${timestamp}] ${level}: ${message}`;
+});
 
 const logger = () => {
     return createLogger({
@@ -37,7 +37,7 @@ const logger = () => {
                 silent: Config.NODE_ENV === "test", // if this logic becomes true, it will become silent
             }),
         ],
-    })
-}
+    });
+};
 
-export default logger
+export default logger;
