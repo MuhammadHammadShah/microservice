@@ -40,44 +40,43 @@ router.post("/register", registerValidator, (async (
     await authController.register(req, res, next);
 }) as RequestHandler);
 
-router.post(
-    "/login",
-    loginValidator,
-    (req: Request, res: Response, next: NextFunction) =>
-        authController.login(req, res, next) as unknown as RequestHandler,
-);
+router.post("/login", loginValidator, (async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => authController.login(req, res, next)) as unknown as RequestHandler);
 
 router.get(
     "/self",
     authenticate as RequestHandler,
-    (req: Request, res: Response) =>
+    (async (req: Request, res: Response) =>
         authController.self(
             req as AuthRequest,
             res,
-        ) as unknown as RequestHandler,
+        )) as unknown as RequestHandler,
 );
 
 router.post(
     "/refresh",
     validateRefreshToken as RequestHandler,
-    (req: Request, res: Response, next: NextFunction) =>
+    (async (req: Request, res: Response, next: NextFunction) =>
         authController.refresh(
             req as AuthRequest,
             res,
             next,
-        ) as unknown as RequestHandler,
+        )) as unknown as RequestHandler,
 );
 
 router.post(
     "/logout",
     authenticate as RequestHandler,
     parseRefreshToken as RequestHandler,
-    (req: Request, res: Response, next: NextFunction) =>
+    (async (req: Request, res: Response, next: NextFunction) =>
         authController.logout(
             req as AuthRequest,
             res,
             next,
-        ) as unknown as RequestHandler,
+        )) as unknown as RequestHandler,
 );
 
 export default router;

@@ -12,9 +12,13 @@ const startServer = async () => {
     } catch (err: unknown) {
         if (err instanceof Error) {
             logger().error(err.message);
+            logger().error(
+                "Failed to connect to database. Retrying in 5 seconds...",
+            );
+            console.error(err.stack); // Add stack trace for debugging
             setTimeout(() => {
                 process.exit(1);
-            }, 1000);
+            }, 5000); // Give more time before exiting
         }
     }
 };

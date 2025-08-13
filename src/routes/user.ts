@@ -17,15 +17,15 @@ const router = express.Router();
 
 const userRepository = AppDataSource.getRepository(User);
 const userService = new UserService(userRepository);
-const userController = new UserController(userService, logger);
+const userController = new UserController(userService, logger());
 
 router.post(
     "/",
     authenticate as RequestHandler,
     canAccess([Roles.ADMIN]),
     createUserValidator,
-    (req: CreateUserRequest, res: Response, next: NextFunction) =>
-        userController.create(req, res, next) as unknown as RequestHandler,
+    (async (req: CreateUserRequest, res: Response, next: NextFunction) =>
+        userController.create(req, res, next)) as unknown as RequestHandler,
 );
 
 router.patch(
@@ -33,8 +33,8 @@ router.patch(
     authenticate as RequestHandler,
     canAccess([Roles.ADMIN]),
     updateUserValidator,
-    (req: UpdateUserRequest, res: Response, next: NextFunction) =>
-        userController.update(req, res, next) as unknown as RequestHandler,
+    (async (req: UpdateUserRequest, res: Response, next: NextFunction) =>
+        userController.update(req, res, next)) as unknown as RequestHandler,
 );
 
 router.get(
@@ -42,24 +42,24 @@ router.get(
     authenticate as RequestHandler,
     canAccess([Roles.ADMIN]),
     listUsersValidator,
-    (req: Request, res: Response, next: NextFunction) =>
-        userController.getAll(req, res, next) as unknown as RequestHandler,
+    (async (req: Request, res: Response, next: NextFunction) =>
+        userController.getAll(req, res, next)) as unknown as RequestHandler,
 );
 
 router.get(
     "/:id",
     authenticate as RequestHandler,
     canAccess([Roles.ADMIN]),
-    (req, res, next) =>
-        userController.getOne(req, res, next) as unknown as RequestHandler,
+    (async (req: Request, res: Response, next: NextFunction) =>
+        userController.getOne(req, res, next)) as unknown as RequestHandler,
 );
 
 router.delete(
     "/:id",
     authenticate as RequestHandler,
     canAccess([Roles.ADMIN]),
-    (req, res, next) =>
-        userController.destroy(req, res, next) as unknown as RequestHandler,
+    (async (req: Request, res: Response, next: NextFunction) =>
+        userController.destroy(req, res, next)) as unknown as RequestHandler,
 );
 
 export default router;

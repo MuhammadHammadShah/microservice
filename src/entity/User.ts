@@ -1,7 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { Tenant } from "./Tenant";
 
-@Entity({ name: "users" })
+@Entity({ name: "user" })
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
@@ -16,5 +22,6 @@ export class User {
     @Column()
     role: string;
     @ManyToOne(() => Tenant)
+    @JoinColumn({ name: "tenant_id" })
     tenant: Tenant | null;
 }

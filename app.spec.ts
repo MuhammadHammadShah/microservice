@@ -1,10 +1,10 @@
-import { calculationDiscount } from "./src/utils";
+import { calculateDiscount } from "./src/utils";
 import request from "supertest";
 import app from "./src/app";
 
 describe.skip("App", () => {
     it("should work", () => {
-        const discount = calculationDiscount(100, 10);
+        const discount = calculateDiscount(100, 10);
 
         expect(discount).toBe(10);
     });
