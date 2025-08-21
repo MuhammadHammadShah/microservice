@@ -5,9 +5,11 @@ import express, { NextFunction, Request, Response } from "express"
 import createHttpError, { HttpError } from "http-errors"
 import logger from "./config/logger"
 import authRouter from "./routes/auth"
+import cookieParser from "cookie-parser"
 
 const app = express()
 app.use(express.json())
+app.use(cookieParser())
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.get("/", (req, res, next) => {

@@ -10,6 +10,7 @@ export const AppDataSource = new DataSource({
     port: Number(Config.DB_PORT),
     username: Config.DB_USERNAME,
     password: Config.DB_PASSWORD,
+
     database: Config.DB_NAME,
 
     /* Don't use this in production `synchronize` , always keep `false`  */
@@ -19,3 +20,9 @@ export const AppDataSource = new DataSource({
     migrations: [],
     subscribers: [],
 })
+// console.log(
+//     "DB password type:",
+//     typeof Config.DB_PASSWORD,
+//     "value:",
+//     JSON.stringify(Config.DB_PASSWORD),
+// )

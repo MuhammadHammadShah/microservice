@@ -1,5 +1,5 @@
-import { NextFunction, Response, Request } from "express"
-import { RegisterUserRequest } from "../types"
+import { NextFunction, Response } from "express"
+import { AuthRequest, RegisterUserRequest } from "../types"
 import { UserService } from "../services/userService"
 import { Logger } from "winston"
 
@@ -99,6 +99,7 @@ export class AuthController {
 
     /* Login*/
     async login(req: RegisterUserRequest, res: Response, next: NextFunction) {
+        console.log("I am from controller.")
         const result = validationResult(req)
         if (!result.isEmpty()) {
             return res.status(400).json({
@@ -197,9 +198,10 @@ export class AuthController {
 
     /* User info "self" */
 
-    // eslint-disable-next-line @typescript-eslint/require-await
-    async self(req: Request, res: Response) {
-        res.json({})
+    async self(req: AuthRequest, res: Response) {
+        console.log(req.auth.sub)
+        const user = await this.userService.findById(Number(req.auth.sub))
+        res.json(user)
     }
 
     /**/

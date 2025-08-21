@@ -14,6 +14,7 @@ const {
     DB_USERNAME,
     DB_PASSWORD,
     REFRESH_TOKEN_SECRET,
+    JWKS_URI,
 } = process.env
 
 export const Config = {
@@ -25,4 +26,5 @@ export const Config = {
     DB_USERNAME,
     DB_PASSWORD,
     REFRESH_TOKEN_SECRET,
+    JWKS_URI: JWKS_URI || "http://localhost:5501/.well-known/jwks.json",
 }

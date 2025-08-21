@@ -9,6 +9,8 @@ import loginValidators from "../validators/login-validator"
 import { TokenService } from "../services/TokenService"
 import { RefreshToken } from "../entity/RefreshToken"
 import { CredentialService } from "../services/credentialService"
+import authenticate from "../middlewares/authenticate"
+import { AuthRequest } from "../types"
 
 const router = express.Router()
 
@@ -50,11 +52,12 @@ router.post(
 
 // authController k upar safe name ka method call krna hai.
 
-router.get("/self", async (req: Request, res: Response) => {
-    await authController.self(req, res)
+router.get("/self", authenticate, async (req: Request, res: Response) => {
+    await authController.self(req as AuthRequest, res)
 })
-router.get("/", (req, res) => {
-    res.send("hi from me")
-})
+
+// router.get("/", (req, res) => {
+//     res.send("hi from me")
+// })
 
 export default router

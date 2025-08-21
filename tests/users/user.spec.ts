@@ -7,7 +7,7 @@ import { User } from "../../src/entity/User"
 import { Roles } from "../../src/constants"
 
 // instead of self many also write it as ` whoAmI `
-describe("GET /auth/self", () => {
+describe("POST /auth/self", () => {
     let connection: DataSource
     let jwks: ReturnType<typeof createJWKSMock>
 
@@ -35,7 +35,14 @@ describe("GET /auth/self", () => {
 
     describe("Given all fields", () => {
         it("should return  the return the 200 status code", async () => {
-            const response = await request(app).get("/auth/self").send()
+            const accessToken = jwks.token({
+                sub: "1",
+                role: Roles.CUSTOMER,
+            })
+            const response = await request(app)
+                .get("/auth/self")
+                .set("Cookie", [`accessToken=${accessToken}`])
+                .send()
             expect(response.statusCode).toBe(200)
         })
 
