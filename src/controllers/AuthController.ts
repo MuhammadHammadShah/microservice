@@ -99,7 +99,6 @@ export class AuthController {
 
     /* Login*/
     async login(req: RegisterUserRequest, res: Response, next: NextFunction) {
-        console.log("I am from controller.")
         const result = validationResult(req)
         if (!result.isEmpty()) {
             return res.status(400).json({
@@ -199,7 +198,6 @@ export class AuthController {
     /* User info "self" */
 
     async self(req: AuthRequest, res: Response) {
-        console.log(req.auth.sub)
         const user = await this.userService.findById(Number(req.auth.sub))
         res.json({
             ...user,
