@@ -1,4 +1,4 @@
-import { checkSchema } from "express-validator"
+import { checkSchema } from "express-validator";
 
 export default checkSchema({
     email: {
@@ -6,7 +6,7 @@ export default checkSchema({
         notEmpty: true,
         trim: true,
     },
-})
+});
 
 // export const registerValidators = [
 //     body('email').isEmail().withMessage('Invalid email address'),

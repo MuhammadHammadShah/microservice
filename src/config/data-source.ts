@@ -1,8 +1,8 @@
-import "reflect-metadata"
-import { DataSource } from "typeorm"
-import { User } from "../entity/User"
-import { Config } from "."
-import { RefreshToken } from "../entity/RefreshToken"
+import "reflect-metadata";
+import { DataSource } from "typeorm";
+import { User } from "../entity/User";
+import { Config } from ".";
+import { RefreshToken } from "../entity/RefreshToken";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -19,7 +19,7 @@ export const AppDataSource = new DataSource({
     entities: [User, RefreshToken], // Whenever, We create an entity, we have to register it here.
     migrations: [],
     subscribers: [],
-})
+});
 // console.log(
 //     "DB password type:",
 //     typeof Config.DB_PASSWORD,

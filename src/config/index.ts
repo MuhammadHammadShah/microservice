@@ -1,9 +1,9 @@
-import { config } from "dotenv"
-import path from "path"
+import { config } from "dotenv";
+import path from "path";
 
 config({
     path: path.join(__dirname, `../../.env.${process.env.NODE_ENV}`),
-})
+});
 
 const {
     PORT,
@@ -15,7 +15,7 @@ const {
     DB_PASSWORD,
     REFRESH_TOKEN_SECRET,
     JWKS_URI,
-} = process.env
+} = process.env;
 
 export const Config = {
     PORT,
@@ -27,4 +27,4 @@ export const Config = {
     DB_PASSWORD,
     REFRESH_TOKEN_SECRET,
     JWKS_URI: JWKS_URI || "http://localhost:5501/.well-known/jwks.json",
-}
+};

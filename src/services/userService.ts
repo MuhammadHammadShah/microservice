@@ -1,10 +1,10 @@
-import { Repository } from "typeorm"
+import { Repository } from "typeorm";
 
-import { User } from "../entity/User"
-import { UserData } from "../types"
-import createHttpError from "http-errors"
-import { Roles } from "../constants"
-import bcrypt from "bcrypt"
+import { User } from "../entity/User";
+import { UserData } from "../types";
+import createHttpError from "http-errors";
+import { Roles } from "../constants";
+import bcrypt from "bcrypt";
 
 export class UserService {
     constructor(private userRepository: Repository<User>) {}
@@ -20,15 +20,15 @@ export class UserService {
             where: {
                 email: email,
             },
-        })
+        });
         if (user) {
-            const err = createHttpError(400, "email already exists!")
-            throw err
+            const err = createHttpError(400, "email already exists!");
+            throw err;
         }
 
         // hashed password
-        const saltRounds = 10
-        const hashedPassword = await bcrypt.hash(password, saltRounds)
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
         try {
             return await this.userRepository.save({
                 /**  awaiting the .save() method but not returning the result.
@@ -38,14 +38,14 @@ export class UserService {
                 email,
                 password: hashedPassword,
                 role: Roles.CUSTOMER,
-            })
+            });
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             const error = createHttpError(
                 500,
                 "Failed to store data in the Database",
-            )
-            throw error
+            );
+            throw error;
         }
     }
 
@@ -54,7 +54,7 @@ export class UserService {
             where: {
                 email,
             },
-        })
+        });
     }
 
     async findById(id: number) {
@@ -62,6 +62,6 @@ export class UserService {
             where: {
                 id,
             },
-        })
+        });
     }
 }
