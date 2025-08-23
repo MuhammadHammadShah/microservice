@@ -12,3 +12,15 @@
 don't install `npm i -D @types/express-validator`
 
 Record is a type of key-value pair where <string,string> is (key,value)
+
+- npm run migration:generate -- src/migration/migration -d src/config/data-source.ts
+
+-- is to put parameters
+
+- npm run migration:run -- -d src/config/data-source.ts
+
+the above command will run the `up` method, which is in the migration file.
+
+- "migration:create": "typeorm-ts-node-commonjs migration:create"
+
+`write the complete command for above, like you do for the above 2 next to it`

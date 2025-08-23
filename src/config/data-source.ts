@@ -14,10 +14,10 @@ export const AppDataSource = new DataSource({
     database: Config.DB_NAME,
 
     /* Don't use this in production `synchronize` , always keep `false`  */
-    synchronize: true,
+    synchronize: false,
     logging: false,
     entities: [User, RefreshToken], // Whenever, We create an entity, we have to register it here.
-    migrations: [],
+    migrations: ["src/migration/*.ts"],
     subscribers: [],
 });
 // console.log(
