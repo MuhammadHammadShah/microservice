@@ -1,71 +1,81 @@
-import express, { NextFunction, Request, Response } from "express"
-import { AuthController } from "../controllers/AuthController"
-import { UserService } from "../services/userService"
-import { AppDataSource } from "../config/data-source"
-import { User } from "../entity/User"
-import logger from "../config/logger"
-import registerValidators from "../validators/register-validator"
-import loginValidators from "../validators/login-validator"
-import { TokenService } from "../services/TokenService"
-import { RefreshToken } from "../entity/RefreshToken"
-import { CredentialService } from "../services/credentialService"
-import authenticate from "../middlewares/authenticate"
-import { AuthRequest } from "../types"
-import validateRefreshToken from "../middlewares/validateRefreshToken"
+import express, { NextFunction, Request, Response } from "express";
+import { AuthController } from "../controllers/AuthController";
+import { UserService } from "../services/userService";
+import { AppDataSource } from "../config/data-source";
+import { User } from "../entity/User";
+import logger from "../config/logger";
+import registerValidators from "../validators/register-validator";
+import loginValidators from "../validators/login-validator";
+import { TokenService } from "../services/TokenService";
+import { RefreshToken } from "../entity/RefreshToken";
+import { CredentialService } from "../services/credentialService";
+import authenticate from "../middlewares/authenticate";
+import { AuthRequest } from "../types";
+import validateRefreshToken from "../middlewares/validateRefreshToken";
+import parseRefreshToken from "../middlewares/parseRefreshToken";
 
-const router = express.Router()
+const router = express.Router();
 
-const userRepository = AppDataSource.getRepository(User)
-const userService = new UserService(userRepository)
-const refreshTokenRepository = AppDataSource.getRepository(RefreshToken)
-const tokenService = new TokenService(refreshTokenRepository)
-const credentialService = new CredentialService()
+const userRepository = AppDataSource.getRepository(User);
+const userService = new UserService(userRepository);
+const refreshTokenRepository = AppDataSource.getRepository(RefreshToken);
+const tokenService = new TokenService(refreshTokenRepository);
+const credentialService = new CredentialService();
 const authController = new AuthController(
     userService,
     logger(),
     tokenService,
     credentialService,
-)
+);
 
 router.post(
     "/register",
     registerValidators,
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            await authController.register(req, res, next)
+            await authController.register(req, res, next);
         } catch (err) {
-            next(err)
+            next(err);
         }
     },
-)
+);
 
 router.post(
     "/login",
     loginValidators,
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            await authController.login(req, res, next)
+            await authController.login(req, res, next);
         } catch (err) {
-            next(err)
+            next(err);
         }
     },
-)
+);
 
 // authController k upar safe name ka method call krna hai.
 
 router.get("/self", authenticate, async (req: Request, res: Response) => {
-    await authController.self(req as AuthRequest, res)
-})
+    await authController.self(req as AuthRequest, res);
+});
 router.post(
     "/refresh",
     validateRefreshToken,
     async (req: Request, res: Response, next: NextFunction) => {
-        await authController.refresh(req as AuthRequest, res, next)
+        await authController.refresh(req as AuthRequest, res, next);
     },
-)
+);
+
+router.post(
+    "/logout",
+    authenticate,
+    parseRefreshToken,
+    async (req: Request, res: Response, next: NextFunction) => {
+        await authController.logout(req as AuthRequest, res, next);
+    },
+);
 
 // router.get("/", (req, res) => {
 //     res.send("hi from me")
 // })
 
-export default router
+export default router;
