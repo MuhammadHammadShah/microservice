@@ -72,7 +72,7 @@ describe("POST /tenants", () => {
             expect(tenants[0].name).toBe(tenantData.name);
             expect(tenants[0].address).toBe(tenantData.address);
         });
-        it("should return if user is not authenticated", async () => {
+        it("should return 401 status code if user is not authenticated", async () => {
             const tenantData = {
                 name: "Tenat Name",
                 address: "Tenant Address",
@@ -82,6 +82,28 @@ describe("POST /tenants", () => {
                 .post("/tenants")
                 .send(tenantData);
             expect(response.statusCode).toBe(401);
+            const tenantRepository = connection.getRepository(Tenant);
+            const tenants = await tenantRepository.find();
+
+            expect(tenants).toHaveLength(0);
+        });
+
+        // user has the token from somewhere, but does not have the role LOL
+        it("should return 403 status code if user is not an admin", async () => {
+            const managerToken = jwks.token({
+                sub: "1",
+                role: Roles.MANAGER,
+            });
+            const tenantData = {
+                name: "Tenat Name",
+                address: "Tenant Address",
+            };
+
+            const response = await request(app)
+                .post("/tenants")
+                .set("Cookie", [`accessToken=${managerToken}`])
+                .send(tenantData);
+            expect(response.statusCode).toBe(403);
             const tenantRepository = connection.getRepository(Tenant);
             const tenants = await tenantRepository.find();
 
