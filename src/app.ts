@@ -6,6 +6,7 @@ import createHttpError, { HttpError } from "http-errors";
 import logger from "./config/logger";
 import authRouter from "./routes/auth";
 import cookieParser from "cookie-parser";
+import tenantRouter from "./routes/tenant";
 
 const app = express();
 app.use(express.static("public", { dotfiles: "allow" }));
@@ -22,6 +23,7 @@ app.get("/", (req, res, next) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/tenants", tenantRouter);
 
 // global error handler
 
