@@ -6,7 +6,7 @@ describe("POST /auth/register", () => {
 
     beforeAll(async () => {
         connection = await AppDataSource.initialize();
-        await connection.synchronize(true);
+        // await connection.synchronize(true);
     });
 
     beforeEach(async () => {

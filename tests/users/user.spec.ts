@@ -14,7 +14,7 @@ describe("POST /auth/self", () => {
     beforeAll(async () => {
         jwks = createJWKSMock("http://localhost:5501");
         connection = await AppDataSource.initialize();
-        await connection.synchronize(true);
+        // await connection.synchronize(true);
     });
 
     beforeEach(async () => {
