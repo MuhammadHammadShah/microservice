@@ -3,7 +3,7 @@ import { Repository } from "typeorm";
 import { User } from "../entity/User";
 import { UserData } from "../types";
 import createHttpError from "http-errors";
-import { Roles } from "../constants";
+
 import bcrypt from "bcrypt";
 
 export class UserService {
@@ -14,6 +14,7 @@ export class UserService {
         lastName,
         email,
         password,
+        role,
     }: UserData): Promise<User> {
         // check  for same email
         const user = await this.userRepository.findOne({
@@ -37,7 +38,7 @@ export class UserService {
                 lastName,
                 email,
                 password: hashedPassword,
-                role: Roles.CUSTOMER,
+                role,
             });
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {

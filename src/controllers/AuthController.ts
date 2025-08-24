@@ -9,6 +9,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { TokenService } from "../services/TokenService";
 import createHttpError from "http-errors";
 import { CredentialService } from "../services/credentialService";
+import { Roles } from "../constants";
 
 export class AuthController {
     /*Called dependency injection*/
@@ -46,6 +47,7 @@ export class AuthController {
                 lastName,
                 email,
                 password,
+                role: Roles.CUSTOMER,
             });
 
             const payload: JwtPayload = {
