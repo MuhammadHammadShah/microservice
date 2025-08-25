@@ -10,4 +10,7 @@ module.exports = {
     },
     verbose: true,
     testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+    collectCoverage:true,
+    coverageProvider:"v8",
+    collectCoverageFrom:["src/**/*.ts","!tests/**","!**node_modules/**"]
 };

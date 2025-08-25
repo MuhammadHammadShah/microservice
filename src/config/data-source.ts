@@ -15,8 +15,8 @@ export const AppDataSource = new DataSource({
     /* Don't use this in production `synchronize` , always keep `false`  */
     synchronize: false,
     logging: false,
-    entities: ["src/entity/*.ts"], // Whenever, We create an entity, we have to register it here.
-    migrations: ["src/migration/*.ts"],
+    entities: ["src/entity/*.{ts,js}"], // Whenever, We create an entity, we have to register it here.
+    migrations: ["src/migration/*.{ts,js}"],
     subscribers: [],
 });
 // console.log(
