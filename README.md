@@ -26,3 +26,5 @@ the above command will run the `up` method, which is in the migration file.
 - "migration:create": "typeorm-ts-node-commonjs migration:create"
 
 `write the complete command for above, like you do for the above 2 next to it`
+
+. in github actions different `jobs` can be placed in different machines.
