@@ -1,6 +1,5 @@
 import { JwtPayload, sign } from "jsonwebtoken";
-import fs from "fs";
-import path from "path";
+
 import createHttpError from "http-errors";
 import { Config } from "../config";
 import { User } from "../entity/User";
@@ -14,11 +13,13 @@ export class TokenService {
     generateAccessToken(payload: JwtPayload) {
         /** Send Cookies before response, or with response */
 
-        let privateKey: Buffer;
+        let privateKey: string;
+        if (!Config.PRIVATE_KEY) {
+            const error = createHttpError(500, "Secret Key is not set.");
+            throw error;
+        }
         try {
-            privateKey = fs.readFileSync(
-                path.join(__dirname, "../../certs/private.pem"),
-            );
+            privateKey = Config.PRIVATE_KEY;
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             const error = createHttpError(
