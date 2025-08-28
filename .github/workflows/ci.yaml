@@ -2,19 +2,37 @@ name: CI
 
 on:
     pull_request:
-        branches:
-            - my-new-branch
+        branches: [my-new-branch]
     push:
-        branches:
-            - my-new-branch
+        branches: [my-new-branch]
 
 jobs:
     build-and-test:
         name: Build the project
         runs-on: ubuntu-latest
-        # if: github.event_name == 'pull_request'
+
+        services:
+            postgres:
+                image: postgres:16-alpine
+                ports: ["5432:5432"]
+                env:
+                    POSTGRES_USER: ${{ secrets.TEST_DB_USERNAME }}
+                    POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+                    POSTGRES_DB: ${{ secrets.TEST_DB_NAME }}
+                options: >-
+                    --health-cmd="pg_isready -U ${{ secrets.TEST_DB_USERNAME }}"
+                    --health-interval=5s
+                    --health-timeout=5s
+                    --health-retries=10
+
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
+
+            - name: Use Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 18
+                  cache: npm
 
             - name: Install dependencies
               run: npm ci
@@ -22,23 +40,36 @@ jobs:
             - name: Run eslint
               run: npm run lint:ci
 
+            # If your test datasource doesn't use `synchronize: true`, uncomment to apply migrations:
+            # - name: Run DB migrations
+            #   env:
+            #     DB_HOST: 127.0.0.1
+            #     DB_PORT: 5432
+            #     DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+            #     DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+            #     DB_NAME: ${{ secrets.TEST_DB_NAME }}
+            #   run: npm run migration:run
+
             - name: Test and coverage
-              run: npm run test
               env:
-                  DB_HOST: ${{ secrets.TEST_DB_HOST }}
-                  DB_PORT: ${{ secrets.TEST_DB_PORT }}
+                  NODE_ENV: test
+                  DB_HOST: 127.0.0.1
+                  DB_PORT: 5432
                   DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
                   DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
                   DB_NAME: ${{ secrets.TEST_DB_NAME }}
                   REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
-                  JWKS_URI: ${{ secrets.JWKS_URI }}
-                  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+                  PRIVATE_KEY_BASE64: ${{ secrets.PRIVATE_KEY_BASE64 }}
+                  JWKS_URI: http://localhost:5501/.well-known/jwks.json
+                  PGHOSTADDR: 127.0.0.1
+              run: npm run test
 
-            - name: Build-test
+            - name: Build
               run: npm run build
 
             - name: SonarCloud Scan
-              uses: SonarSource/sonarcloud-github-action@master
+              if: ${{ env.SONAR_TOKEN != '' }}
+              uses: SonarSource/sonarcloud-github-action@v2
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -47,20 +78,21 @@ jobs:
         name: Build and Push Docker Image
         needs: build-and-test
         runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/my-new-branch' && github.event_name == 'push'
         env:
             IMAGE_NAME: rekhta23/mernstack_auth_service
             IMAGE_TAG: build-${{ github.run_number }}
-        if: github.ref == 'refs/heads/my-new-branch' && github.event_name == 'push'
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v3
+            - uses: actions/checkout@v4
 
             - name: Log in to Docker Hub
-              uses: docker/login-action@v1
+              uses: docker/login-action@v3
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
             - name: Build Docker image
               run: docker build -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -f docker/prod/Dockerfile .
+
             - name: Push Docker image to Docker Hub
               run: docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
