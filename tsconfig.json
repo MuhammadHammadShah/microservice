@@ -115,5 +115,5 @@
         "experimentalDecorators": true
     },
 
-    "exclude": ["node_modules", "dist", "tests"]
+    "exclude": ["node_modules", "dist", "tests", "**/*.spec.ts"]
 }
