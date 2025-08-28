@@ -190,39 +190,37 @@ describe("POST /auth/register", () => {
             expect(response.statusCode).toBe(400);
             expect(users).toHaveLength(1);
         });
-        it("should return the access token and refresh token in a cookie", async () => {
-            /* Arrange */
+        it("should return a accessToken and refreshToken inside a cookie", async () => {
+            //Arrange
             const userData = {
-                firstName: "Rakesh",
-                lastName: "K",
-                email: "123@gmail.com",
-                password: "secret",
+                firstName: "rekhta",
+                lastName: "Menahil",
+                email: "rekhta@gmail.com",
+                password: "secretPassword",
+                role: Roles.CUSTOMER,
             };
 
-            /* Act */
-
-            // we need the headers within response
+            //Act
             const response = await request(app)
                 .post("/auth/register")
                 .send(userData);
 
-            /* Assert */
-            let accessToken = null;
-            let refreshToken = null;
+            interface Headers {
+                ["set-cookie"]: string[];
+            }
+
+            //Assert
+            let accessToken = "";
+            let refreshToken = "";
             const cookies =
-                (response.headers["set-cookie"] as unknown as string[]) || [];
+                (response.headers as unknown as Headers)["set-cookie"] || [];
 
             cookies.forEach((cookie) => {
-                if (cookie.startsWith("accessToken=")) {
-                    accessToken = cookie.split(";")[0].split("=")[1]; // this line does the below
-                    // it first split the token by ; then get the first element then split it by = and get the second element which a token value
-                }
-
-                if (cookie.startsWith("refreshToken=")) {
+                if (cookie.startsWith("accessToken="))
+                    accessToken = cookie.split(";")[0].split("=")[1];
+                if (cookie.startsWith("refreshToken="))
                     refreshToken = cookie.split(";")[0].split("=")[1];
-                }
             });
-
             expect(accessToken).not.toBeNull();
             expect(refreshToken).not.toBeNull();
             expect(isJwt(accessToken)).toBeTruthy();

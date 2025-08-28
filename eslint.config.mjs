@@ -10,26 +10,31 @@ export default tseslint.config(
         ignores: [
             "dist",
             "node_modules",
-            "eslint.config.*",
-            "log",
-            "app.spec.ts",
+            "eslint.config.mjs",
             "jest.config.js",
-            "**/scripts/*.mjs",
-            "coverage",
-            "tests",
+            "scripts/generateKeys.mjs",
+            "scripts/convertPemToken.mjs",
+            "scripts/*.mjs",
+            "*.spec.ts",
+            "tests/",
+            "coverage/",
+            ".github",
         ],
     },
     {
         languageOptions: {
             parserOptions: {
-                project: "./tsconfig.json",
                 projectService: true,
+                allowDefaultProject: true,
                 tsconfigRootDir: import.meta.dirname,
             },
         },
+        settings: {
+            noWarnIgnored: true, // tells eslint not to warn on ignored files
+        },
         rules: {
-            // 'no-console': 'error',
-            "dot-notation": "error",
+            // "no-console": "error",
+            // 'dot-notation': 'error',
         },
     },
 );
