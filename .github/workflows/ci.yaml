@@ -15,12 +15,14 @@ jobs:
             postgres:
                 image: postgres:16-alpine
                 ports: ["5432:5432"]
+                # Use static values for the service. Your app will connect with the same values below.
                 env:
-                    POSTGRES_USER: ${{ secrets.TEST_DB_USERNAME }}
-                    POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-                    POSTGRES_DB: ${{ secrets.TEST_DB_NAME }}
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                    POSTGRES_DB: mernstack_auth_service_test
+                # Don't use secrets/expressions here. Keep this plain.
                 options: >-
-                    --health-cmd="pg_isready -U ${{ secrets.TEST_DB_USERNAME }}"
+                    --health-cmd="pg_isready -U postgres"
                     --health-interval=5s
                     --health-timeout=5s
                     --health-retries=10
@@ -40,14 +42,14 @@ jobs:
             - name: Run eslint
               run: npm run lint:ci
 
-            # If your test datasource doesn't use `synchronize: true`, uncomment to apply migrations:
+            # If you don't use synchronize:true for tests, uncomment to apply migrations:
             # - name: Run DB migrations
             #   env:
             #     DB_HOST: 127.0.0.1
             #     DB_PORT: 5432
-            #     DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
-            #     DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-            #     DB_NAME: ${{ secrets.TEST_DB_NAME }}
+            #     DB_USERNAME: postgres
+            #     DB_PASSWORD: postgres
+            #     DB_NAME: mernstack_auth_service_test
             #   run: npm run migration:run
 
             - name: Test and coverage
@@ -55,11 +57,12 @@ jobs:
                   NODE_ENV: test
                   DB_HOST: 127.0.0.1
                   DB_PORT: 5432
-                  DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
-                  DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-                  DB_NAME: ${{ secrets.TEST_DB_NAME }}
+                  DB_USERNAME: postgres
+                  DB_PASSWORD: postgres
+                  DB_NAME: mernstack_auth_service_test
                   REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
-                  PRIVATE_KEY_BASE64: ${{ secrets.PRIVATE_KEY_BASE64 }}
+                  PRIVATE_KEY: ${{ secrets.PRIVATE_KEY}}
+                  # Set only if your tests actually hit JWKS:
                   JWKS_URI: http://localhost:5501/.well-known/jwks.json
                   PGHOSTADDR: 127.0.0.1
               run: npm run test
