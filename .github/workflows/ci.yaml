@@ -32,10 +32,15 @@ jobs:
 
                   # --- Supabase DB (set these in repo Secrets) ---
                   # Either provide DATABASE_URL, or the individual DB_* values.
+                  # Prefer URL, but ALSO pass split vars in case your datasource falls back.
                   DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
-                  DB_SSL: "true"
 
-                 
+                  DB_HOST: ${{ secrets.SUPABASE_DB_HOST }}
+                  DB_PORT: ${{ secrets.SUPABASE_DB_PORT }}
+                  DB_USERNAME: ${{ secrets.SUPABASE_DB_USER }}
+                  DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+                  DB_NAME: ${{ secrets.SUPABASE_DB_NAME }}
+                  DB_SSL: "true" # ensure SSL
 
                   # JWT stuff
                   REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
