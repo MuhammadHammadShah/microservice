@@ -20,7 +20,7 @@ jobs:
               run: npm ci
 
             - name: Run eslint
-              run: npm run lint
+              run: npm run lint:ci
 
             - name: Test and coverage
               run: npm run test
