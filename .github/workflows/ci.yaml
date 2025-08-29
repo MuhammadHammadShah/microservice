@@ -33,6 +33,8 @@ jobs:
                   # --- Supabase DB (set these in repo Secrets) ---
                   # Either provide DATABASE_URL, or the individual DB_* values.
                   DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
+                  DB_SSL: "true"
+
                  
 
                   # JWT stuff
