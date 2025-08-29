@@ -3,10 +3,10 @@ name: CI
 on:
     pull_request:
         branches:
-            - main
+            - my-new-branch
     push:
         branches:
-            - main
+            - my-new-branch
 
 jobs:
     build-and-test:
@@ -50,7 +50,7 @@ jobs:
         env:
             IMAGE_NAME: muhammadhammadshah2000/mernstack_auth_service
             IMAGE_TAG: build-${{ github.run_number }}
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/my-new-branch' && github.event_name == 'push'
         steps:
             - name: Checkout repository
               uses: actions/checkout@v3
