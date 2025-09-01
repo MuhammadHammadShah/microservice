@@ -1,8 +1,9 @@
 import "reflect-metadata";
 
 import express, { NextFunction, Request, Response } from "express";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import createHttpError, { HttpError } from "http-errors";
+
+import cors from "cors";
+import { HttpError } from "http-errors";
 import logger from "./config/logger";
 import authRouter from "./routes/auth";
 import cookieParser from "cookie-parser";
@@ -10,6 +11,15 @@ import tenantRouter from "./routes/tenant";
 import userRouter from "./routes/user";
 
 const app = express();
+app.use(
+    cors({
+        // todo move to .env file
+
+        origin: ["http://localhost:5173"],
+        credentials: true,
+    }),
+);
+// app.options("*", cors());
 app.use(express.static("public", { dotfiles: "allow" }));
 
 app.use(express.json());

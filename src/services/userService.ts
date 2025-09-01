@@ -15,6 +15,7 @@ export class UserService {
         email,
         password,
         role,
+        tenantId,
     }: UserData): Promise<User> {
         // check  for same email
         const user = await this.userRepository.findOne({
@@ -39,6 +40,7 @@ export class UserService {
                 email,
                 password: hashedPassword,
                 role,
+                tenant: tenantId ? { id: tenantId } : undefined,
             });
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
@@ -70,6 +72,9 @@ export class UserService {
         return await this.userRepository.findOne({
             where: {
                 id,
+            },
+            relations: {
+                tenant: true,
             },
         });
     }
