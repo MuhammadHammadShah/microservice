@@ -1,5 +1,5 @@
-import express from "express";
-
+import express, { RequestHandler } from "express";
+import { NextFunction, Response, Request } from "express";
 import authenticate from "../middlewares/authenticate";
 import { canAccess } from "../middlewares/canAccess";
 import { Roles } from "../constants";
@@ -7,15 +7,28 @@ import { UserController } from "../controllers/UserController";
 import { UserService } from "../services/userService";
 import { AppDataSource } from "../config/data-source";
 import { User } from "../entity/User";
+import logger from "../config/logger";
+import listUsersValidator from "../validators/list-users-validator";
 
 const router = express.Router();
 
 const userRepository = AppDataSource.getRepository(User);
 const userService = new UserService(userRepository);
-const userController = new UserController(userService);
+const userController = new UserController(userService, logger());
 
 router.post("/", authenticate, canAccess([Roles.ADMIN]), (req, res, next) =>
     userController.create(req, res, next),
+);
+
+// get all users
+
+router.get(
+    "/",
+    authenticate as RequestHandler,
+    canAccess([Roles.ADMIN]),
+    listUsersValidator,
+    (req: Request, res: Response, next: NextFunction) =>
+        userController.getAll(req, res, next),
 );
 
 export default router;
